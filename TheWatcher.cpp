@@ -12,7 +12,7 @@ private:
 
 public:
     // Constructor
-    Anime(string t, int r) : title(t), rating(r) {}
+    Anime(string t = "", int r = 0) : title(t), rating(r) {}
 
     // Member functions
     string getTitle() const {
@@ -111,6 +111,10 @@ int main() {
     // Load existing watchlist if available
     user.loadFromFile();
 
+    const int MAX_ANIMES = 100; // Define the maximum number of animes in the array
+    Anime animeArray[MAX_ANIMES]; // Array of Anime objects
+    int animeCount = 0;
+
     char choice;
     do {
         cout << "\nMenu:" << endl;
@@ -125,25 +129,31 @@ int main() {
 
         switch (choice) {
             case '1': {
-                string title;
-                int rating;
+                if (animeCount < MAX_ANIMES) {
+                    string title;
+                    int rating;
 
-                cout << "Enter anime title: ";
-                getline(cin, title);
+                    cout << "Enter anime title: ";
+                    getline(cin, title);
 
-                cout << "Enter anime rating (1-10): ";
-                cin >> rating;
+                    cout << "Enter anime rating (1-10): ";
+                    cin >> rating;
 
-                // Clear the input buffer
-                cin.ignore();
+                    // Clear the input buffer
+                    cin.ignore();
 
-                // Creating Anime object and adding it to the User's watchlist
-                Anime anime(title, rating);
-                user.addAnime(anime);
+                    // Create an Anime object and add it to the array
+                    Anime anime(title, rating);
+                    animeArray[animeCount++] = anime;
 
-                // Save the User's watchlist
-                user.saveToFile();
+                    // Add the Anime object to the User's watchlist
+                    user.addAnime(anime);
 
+                    // Save the User's watchlist
+                    user.saveToFile();
+                } else {
+                    cout << "Maximum number of animes reached." << endl;
+                }
                 break;
             }
             case '2':
