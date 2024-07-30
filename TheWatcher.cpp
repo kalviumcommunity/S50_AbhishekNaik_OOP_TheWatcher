@@ -16,21 +16,21 @@ public:
 
     // Member functions
     string getTitle() const {
-        return title;
+        return this->title;
     }
 
     int getRating() const {
-        return rating;
+        return this->rating;
     }
 
     void setRating(int r) {
-        rating = r;
+        this->rating = r; // Using `this` pointer to refer to the object's rating attribute
     }
 
     // Save to file
     void saveToFile(ofstream& file) const {
-        file << title << endl;
-        file << rating << endl;
+        file << this->title << endl; // Using `this` pointer to access title
+        file << this->rating << endl; // Using `this` pointer to access rating
     }
 
     // Load from file
@@ -55,25 +55,25 @@ public:
 
     // Member functions
     void addAnime(const Anime& anime) {
-        watchlist.push_back(anime);
+        this->watchlist.push_back(anime); // Using `this` pointer to refer to the watchlist
     }
 
     void displayWatchlist() const {
-        if (watchlist.empty()) {
+        if (this->watchlist.empty()) {
             cout << "Watchlist is empty." << endl;
             return;
         }
-        cout << "User: " << name << "'s Watchlist:" << endl;
-        for (const Anime& anime : watchlist) {
+        cout << "User: " << this->name << "'s Watchlist:" << endl;
+        for (const Anime& anime : this->watchlist) {
             cout << "Title: " << anime.getTitle() << ", Rating: " << anime.getRating() << endl;
         }
     }
 
     // Save watchlist to file
     void saveToFile() const {
-        ofstream file(name + "_watchlist.txt");
+        ofstream file(this->name + "_watchlist.txt");
         if (file.is_open()) {
-            for (const Anime& anime : watchlist) {
+            for (const Anime& anime : this->watchlist) {
                 anime.saveToFile(file);
             }
             file.close();
@@ -84,13 +84,13 @@ public:
 
     // Load watchlist from file
     void loadFromFile() {
-        ifstream file(name + "_watchlist.txt");
+        ifstream file(this->name + "_watchlist.txt");
         if (file.is_open()) {
-            watchlist.clear();  // Clear existing watchlist
+            this->watchlist.clear();  // Clear existing watchlist
             while (!file.eof()) {
                 Anime anime = Anime::loadFromFile(file);
                 if (file) {  // Check if read was successful
-                    addAnime(anime);
+                    this->addAnime(anime);
                 }
             }
             file.close();
