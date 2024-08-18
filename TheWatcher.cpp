@@ -10,9 +10,14 @@ private:
     string title;
     int rating;
 
+    // Static variable to count the number of Anime objects created
+    static int animeCount;
+
 public:
     // Constructor
-    Anime(string t = "", int r = 0) : title(t), rating(r) {}
+    Anime(string t = "", int r = 0) : title(t), rating(r) {
+        animeCount++; // Increment the counter each time an Anime object is created
+    }
 
     // Member functions
     string getTitle() const {
@@ -40,19 +45,31 @@ public:
         file.ignore();
         return Anime(t, r);
     }
+
+    // Static function to get the current count of Anime objects
+    static int getAnimeCount() {
+        return animeCount;
+    }
 };
+
+// Initialize static variable
+int Anime::animeCount = 0;
 
 class User {
 private:
     string name;
-    vector<Anime*> watchlist;  // Store pointers to Anime objects
+    vector<Anime*> watchlist;
+
+    // Static variable to count the number of User objects created
+    static int userCount;
 
 public:
     // Constructor
-    User(string n) : name(n) {}
+    User(string n) : name(n) {
+        userCount++; // Increment the counter each time a User object is created
+    }
 
     ~User() {
-        // Destructor to clean up dynamic memory
         for (Anime* anime : watchlist) {
             delete anime;
         }
@@ -100,7 +117,15 @@ public:
             cerr << "Unable to open file for reading." << endl;
         }
     }
+
+    // Static function to get the current count of User objects
+    static int getUserCount() {
+        return userCount;
+    }
 };
+
+// Initialize static variable
+int User::userCount = 0;
 
 int main() {
     string userName;
@@ -115,8 +140,9 @@ int main() {
         cout << "\nMenu:" << endl;
         cout << "1. Add Anime" << endl;
         cout << "2. Display Watchlist" << endl;
-        cout << "3. Exit" << endl;
-        cout << "Enter your choice (1-3): ";
+        cout << "3. Display Object Counts" << endl;  // New menu option
+        cout << "4. Exit" << endl;
+        cout << "Enter your choice (1-4): ";
         cin >> choice;
         cin.ignore();
 
@@ -140,14 +166,18 @@ int main() {
             case '2':
                 user.displayWatchlist();
                 break;
-            case '3':
+            case '3':  // Display object counts
+                cout << "Total number of Anime objects: " << Anime::getAnimeCount() << endl;
+                cout << "Total number of User objects: " << User::getUserCount() << endl;
+                break;
+            case '4':
                 cout << "Exiting program." << endl;
                 break;
             default:
-                cout << "Invalid choice. Please enter a number between 1 and 3." << endl;
+                cout << "Invalid choice. Please enter a number between 1 and 4." << endl;
                 break;
         }
-    } while (choice != '3');
+    } while (choice != '4');
 
     return 0;
 }
