@@ -7,80 +7,90 @@ using namespace std;
 
 class Anime {
 private:
-    string title;
-    int rating;
+    string title;  // The name of the anime
+    int rating;    // The rating of the anime
 
-    // Static variable to count the number of Anime objects created
+    // Keeps track of how many Anime objects have been created
     static int animeCount;
 
 public:
-    // Constructor
+    // Constructor: This function runs whenever a new Anime object is created.
+    // It sets the title and rating, and also increases the animeCount by 1.
     Anime(string t = "", int r = 0) : title(t), rating(r) {
-        animeCount++; // Increment the counter each time an Anime object is created
+        animeCount++; // Increase the counter whenever a new Anime is created
     }
 
-    // Member functions
+    // Gets the title of the Anime
     string getTitle() const {
         return this->title;
     }
 
+    // Gets the rating of the Anime
     int getRating() const {
         return this->rating;
     }
 
+    // Updates the rating of the Anime
     void setRating(int r) {
         this->rating = r;
     }
 
+    // Saves the Anime's title and rating to a file
     void saveToFile(ofstream& file) const {
         file << this->title << endl;
         file << this->rating << endl;
     }
 
+    // Loads an Anime from a file and returns it
     static Anime loadFromFile(ifstream& file) {
         string t;
         int r;
         getline(file, t);
         file >> r;
-        file.ignore();
+        file.ignore(); // Ignore leftover newline character
         return Anime(t, r);
     }
 
-    // Static function to get the current count of Anime objects
+    // Static function to get the total number of Anime objects created so far
     static int getAnimeCount() {
         return animeCount;
     }
 };
 
-// Initialize static variable
+// Initialize the static variable to 0 (no Anime objects created yet)
 int Anime::animeCount = 0;
 
 class User {
 private:
-    string name;
-    vector<Anime*> watchlist;
+    string name;  // The name of the user
+    vector<Anime*> watchlist;  // The user's list of Anime
 
-    // Static variable to count the number of User objects created
+    // Keeps track of how many User objects have been created
     static int userCount;
 
 public:
-    // Constructor
+    // Constructor: This function runs whenever a new User object is created.
+    // It sets the user's name and increases the userCount by 1.
     User(string n) : name(n) {
-        userCount++; // Increment the counter each time a User object is created
+        userCount++; // Increase the counter whenever a new User is created
     }
 
+    // Destructor: This function runs when a User object is deleted.
+    // It makes sure all the Anime objects in the watchlist are deleted too.
     ~User() {
         for (Anime* anime : watchlist) {
             delete anime;
         }
     }
 
+    // Adds a new Anime to the user's watchlist
     void addAnime(Anime* anime) {
         this->watchlist.push_back(anime);
     }
 
+    // Shows all the Anime in the user's watchlist
     void displayWatchlist() const {
-        if (this->watchlist.empty()) {
+        if (this->watchlist.empty()) {  // If the watchlist is empty
             cout << "Watchlist is empty." << endl;
             return;
         }
@@ -90,6 +100,7 @@ public:
         }
     }
 
+    // Saves the user's watchlist to a file
     void saveToFile() const {
         ofstream file(this->name + "_watchlist.txt");
         if (file.is_open()) {
@@ -102,14 +113,15 @@ public:
         }
     }
 
+    // Loads the user's watchlist from a file
     void loadFromFile() {
         ifstream file(this->name + "_watchlist.txt");
         if (file.is_open()) {
-            this->watchlist.clear();
-            while (!file.eof()) {
+            this->watchlist.clear(); // Clear the current watchlist
+            while (!file.eof()) {  // Keep loading until the end of the file
                 Anime anime = Anime::loadFromFile(file);
-                if (file) {
-                    this->addAnime(new Anime(anime)); // Add dynamically allocated Anime object
+                if (file) {  // If loading was successful
+                    this->addAnime(new Anime(anime)); // Add the loaded Anime to the watchlist
                 }
             }
             file.close();
@@ -118,13 +130,13 @@ public:
         }
     }
 
-    // Static function to get the current count of User objects
+    // Static function to get the total number of User objects created so far
     static int getUserCount() {
         return userCount;
     }
 };
 
-// Initialize static variable
+// Initialize the static variable to 0 (no User objects created yet)
 int User::userCount = 0;
 
 int main() {
@@ -132,8 +144,8 @@ int main() {
     cout << "Enter your username to register: ";
     getline(cin, userName);
 
-    User user(userName);
-    user.loadFromFile();
+    User user(userName);  // Create a new User with the entered name
+    user.loadFromFile();  // Load the user's watchlist from a file
 
     char choice;
     do {
@@ -158,15 +170,15 @@ int main() {
                 cin >> rating;
                 cin.ignore();
 
-                Anime* anime = new Anime(title, rating);  // Dynamically allocate Anime
-                user.addAnime(anime);
-                user.saveToFile();
+                Anime* anime = new Anime(title, rating);  // Create a new Anime object
+                user.addAnime(anime);  // Add the Anime to the user's watchlist
+                user.saveToFile();  // Save the updated watchlist to a file
                 break;
             }
             case '2':
-                user.displayWatchlist();
+                user.displayWatchlist();  // Show the user's watchlist
                 break;
-            case '3':  // Display object counts
+            case '3':  // Show the total number of Anime and User objects created
                 cout << "Total number of Anime objects: " << Anime::getAnimeCount() << endl;
                 cout << "Total number of User objects: " << User::getUserCount() << endl;
                 break;
@@ -177,7 +189,7 @@ int main() {
                 cout << "Invalid choice. Please enter a number between 1 and 4." << endl;
                 break;
         }
-    } while (choice != '4');
+    } while (choice != '4');  // Keep showing the menu until the user chooses to exit
 
     return 0;
 }
