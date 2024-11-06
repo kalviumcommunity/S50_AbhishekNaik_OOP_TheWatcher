@@ -71,8 +71,16 @@ public:
         return name;
     }
 
+    // Function Overloading: Add anime either by passing title and rating, or by passing an Anime object.
+    void addAnime(string title, int rating) {
+        Anime *anime = new Anime(title, rating);
+        watchlist.push_back(anime);
+        cout << "Anime added: " << title << " with rating " << rating << endl;
+    }
+
     void addAnime(Anime *anime) {
         watchlist.push_back(anime);
+        cout << "Anime added: " << anime->getTitle() << " with rating " << anime->getRating() << endl;
     }
 
     void displayWatchlist() const {
@@ -93,7 +101,7 @@ public:
 
 int User::userCount = 0;
 
-class PremiumUser : public User {  // Single Inheritance
+class PremiumUser : public User {
 public:
     PremiumUser(string n) : User(n) {}
 
@@ -102,7 +110,7 @@ public:
     }
 };
 
-class AdminUser : public PremiumUser {  // Multilevel Inheritance
+class AdminUser : public PremiumUser {
 public:
     AdminUser(string n) : PremiumUser(n) {}
 
@@ -117,9 +125,7 @@ public:
 
 int main() {
     // Admin user Abhishek is hardcoded
-    AdminUser admin("Abhishek");  // Admin user named Abhishek
-    // admin.displayPrivileges();
-    // admin.manageContent();
+    AdminUser admin("Abhishek");
 
     string userName, userType;
     char choice;
@@ -132,34 +138,34 @@ int main() {
             break;
         }
 
-        // Check if the entered name is the admin name
         User *user = nullptr;
         if (userName == "Abhishek") {
             user = &admin;  // Assigning the already created admin instance
             cout << "Welcome, Admin!" << endl;
             admin.displayPrivileges();
-            admin.manageContent();  // Admin can manage content
+            admin.manageContent();
         } else {
             cout << "Enter user type (Standard/Premium): ";
             getline(cin, userType);
 
             if (userType == "Standard") {
-                user = new User(userName);  // Create a standard user
+                user = new User(userName);
             } else if (userType == "Premium") {
-                user = new PremiumUser(userName);  // Create a premium user
+                user = new PremiumUser(userName);
             } else {
                 cout << "Invalid user type. Defaulting to Standard." << endl;
-                user = new User(userName);  // Default to standard if input is invalid
+                user = new User(userName);
             }
-            user->displayPrivileges();  // Display privileges of the created user
+            user->displayPrivileges();
         }
 
         // Anime interaction for users
         cout << "\nMenu:" << endl;
-        cout << "1. Add Anime" << endl;
-        cout << "2. Display Watchlist" << endl;
-        cout << "3. Exit" << endl;
-        cout << "Enter your choice (1-3): ";
+        cout << "1. Add Anime by Title and Rating" << endl;
+        cout << "2. Add Anime by Anime Object" << endl;
+        cout << "3. Display Watchlist" << endl;
+        cout << "4. Exit" << endl;
+        cout << "Enter your choice (1-4): ";
         cin >> choice;
         cin.ignore();
 
@@ -175,27 +181,40 @@ int main() {
             cin >> rating;
             cin.ignore();
 
-            Anime *anime = new Anime(title, rating);
-            user->addAnime(anime);
+            user->addAnime(title, rating);  // Adding anime using title and rating
             break;
         }
-        case '2':
+        case '2': {
+            string title;
+            int rating;
+
+            cout << "Enter anime title: ";
+            getline(cin, title);
+
+            cout << "Enter anime rating (1-10): ";
+            cin >> rating;
+            cin.ignore();
+
+            Anime *anime = new Anime(title, rating);
+            user->addAnime(anime);  // Adding anime using Anime object
+            break;
+        }
+        case '3':
             user->displayWatchlist();
             break;
-        case '3':
+        case '4':
             cout << "Exiting program." << endl;
             break;
         default:
-            cout << "Invalid choice. Please enter a number between 1 and 3." << endl;
+            cout << "Invalid choice. Please enter a number between 1 and 4." << endl;
             break;
         }
 
-        // Clean up user memory if it's not the admin
         if (user != &admin) {
             delete user;
         }
 
-    } while (choice != '3');
+    } while (choice != '4');
 
     return 0;
 }
