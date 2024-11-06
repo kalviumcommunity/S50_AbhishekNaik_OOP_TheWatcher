@@ -1,47 +1,52 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-class Anime
-{
+class Anime {
 private:
     string title;
     int rating;
     static int animeCount;
 
 public:
-    Anime(string t = "", int r = 0) : title(t), rating(r)
-    {
+    // Default constructor
+    Anime() : title("Unknown"), rating(0) {
         animeCount++;
+        cout << "Anime default constructor called." << endl;
     }
 
-    string getTitle() const
-    {
+    // Parameterized constructor
+    Anime(string t, int r) : title(t), rating(r) {
+        animeCount++;
+        cout << "Anime parameterized constructor called." << endl;
+    }
+
+    // Destructor
+    ~Anime() {
+        cout << "Anime destructor called for " << title << endl;
+    }
+
+    string getTitle() const {
         return title;
     }
 
-    void setTitle(const string &t)
-    {
+    void setTitle(const string &t) {
         title = t;
     }
 
-    int getRating() const
-    {
+    int getRating() const {
         return rating;
     }
 
-    void setRating(int r)
-    {
+    void setRating(int r) {
         rating = r;
     }
 
-    void saveToFile(ofstream &file) const
-    {
+    void saveToFile(ofstream &file) const {
         file << title << endl;
         file << rating << endl;
     }
 
-    static Anime loadFromFile(ifstream &file)
-    {
+    static Anime loadFromFile(ifstream &file) {
         string t;
         int r;
         getline(file, t);
@@ -50,113 +55,93 @@ public:
         return Anime(t, r);
     }
 
-    static int getAnimeCount()
-    {
+    static int getAnimeCount() {
         return animeCount;
     }
 };
 
 int Anime::animeCount = 0;
 
-class User
-{
+class User {
 private:
     string name;
     vector<Anime *> watchlist;
     static int userCount;
 
 public:
-    User(string n) : name(n)
-    {
+    // Parameterized constructor
+    User(string n) : name(n) {
         userCount++;
+        cout << "User constructor called for " << name << endl;
     }
 
-    ~User()
-    {
-        for (Anime *anime : watchlist)
-        {
+    // Destructor
+    ~User() {
+        for (Anime *anime : watchlist) {
             delete anime;
         }
+        cout << "User destructor called for " << name << endl;
     }
 
-    string getName() const
-    {
+    string getName() const {
         return name;
     }
 
-    void setName(const string &n)
-    {
+    void setName(const string &n) {
         name = n;
     }
 
-    void addAnime(Anime *anime)
-    {
+    void addAnime(Anime *anime) {
         watchlist.push_back(anime);
     }
 
-    void displayWatchlist() const
-    {
-        if (watchlist.empty())
-        {
+    void displayWatchlist() const {
+        if (watchlist.empty()) {
             cout << "Watchlist is empty." << endl;
             return;
         }
         cout << "User: " << name << "'s Watchlist:" << endl;
-        for (const Anime *anime : watchlist)
-        {
+        for (const Anime *anime : watchlist) {
             cout << "Title: " << anime->getTitle() << ", Rating: " << anime->getRating() << endl;
         }
     }
 
-    void saveToFile() const
-    {
+    void saveToFile() const {
         ofstream file(name + "_watchlist.txt");
-        if (file.is_open())
-        {
-            for (const Anime *anime : watchlist)
-            {
+        if (file.is_open()) {
+            for (const Anime *anime : watchlist) {
                 anime->saveToFile(file);
             }
             file.close();
-        }
-        else
-        {
+        } else {
             cerr << "Unable to open file for writing." << endl;
         }
     }
 
-    void loadFromFile()
-    {
+    void loadFromFile() {
         ifstream file(name + "_watchlist.txt");
-        if (file.is_open())
-        {
+        if (file.is_open()) {
             watchlist.clear();
-            while (!file.eof())
-            {
+            while (!file.eof()) {
                 Anime anime = Anime::loadFromFile(file);
-                if (file)
-                {
+                if (file) {
                     addAnime(new Anime(anime));
                 }
             }
             file.close();
-        }
-        else
-        {
+        } else {
             cerr << "Unable to open file for reading." << endl;
         }
     }
 
-    static int getUserCount()
-    {
+    static int getUserCount() {
         return userCount;
     }
 };
 
 int User::userCount = 0;
 
-int main()
-{
+int main() {
     string userName;
     cout << "Enter your username to register: ";
     getline(cin, userName);
@@ -164,8 +149,7 @@ int main()
     User user(userName);
     user.loadFromFile();
     char choice;
-    do
-    {
+    do {
         cout << "\nMenu:" << endl;
         cout << "1. Add Anime" << endl;
         cout << "2. Display Watchlist" << endl;
@@ -174,10 +158,8 @@ int main()
         cin >> choice;
         cin.ignore();
 
-        switch (choice)
-        {
-        case '1':
-        {
+        switch (choice) {
+        case '1': {
             string title;
             int rating;
 
